@@ -45,15 +45,21 @@ def interrupt_processing(value=True):
 
 MAX_RESOLUTION=8192
 
-cred_path = None
-ROOT_BUCKET_NAME = None
-dir_path = path.dirname(path.realpath(__file__))
+def initialize_firebase():
+    # Get the service account key JSON file contents from the environment variable
+    cred_contents = os.getenv('FIREBASE_CREDENTIALS')
 
-IMAGE_BUCKET_NAME = "dreamboothy.appspot.com"
-DEV_IMAGE_BUCKET_NAME = "dreamboothy-dev.appspot.com"
+    if not cred_contents:
+        raise ValueError('The FIREBASE_CREDENTIALS environment variable was not found!')
 
-cred_path = path.join(dir_path, ".keys/DEV_DO_NOT_COMMIT_devServiceAccountKey.json")
-ROOT_BUCKET_NAME = DEV_IMAGE_BUCKET_NAME
+    # Parse the credentials from the string value
+    cred_dict = json.loads(cred_contents)
+    
+    # Initialize the app with a service account, granting admin privileges
+    firebase_admin.initialize_app(credentials.Certificate(cred_dict))
+
+# Assuming you're calling this function at the start of your application
+initialize_firebase()
 
 CRED = credentials.Certificate(cred_path)
 app = firebase_admin.initialize_app(CRED)
