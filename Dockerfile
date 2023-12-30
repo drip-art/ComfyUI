@@ -1,8 +1,13 @@
 # Use an official Python runtime as a parent image
-FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04
+FROM nvidia/cuda:12.3.1-runtime-ubuntu22.04
 
 # Install Python and pip
-RUN apt-get update && apt-get install -y python3.11 python3-pip
+ENV TZ=America/New_York
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get install -y python3.11 python3-pip
 
 # Set the working directory in the container to /app
 WORKDIR /app
