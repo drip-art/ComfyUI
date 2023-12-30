@@ -1,5 +1,8 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04
+
+# Install Python and pip
+RUN apt-get update && apt-get install -y python3.11 python3-pip
 
 # Set the working directory in the container to /app
 WORKDIR /app
