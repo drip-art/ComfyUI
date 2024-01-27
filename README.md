@@ -10,14 +10,16 @@ Drip Art's ComfyUI Fork
 - Dockerized
 - Output images are saved to Firestore.
 
-# Original
+---
+
+# Original Readme
 
 Workflow examples can be found on the [Examples page](https://comfyanonymous.github.io/ComfyUI_examples/)
 
 ## Shortcuts
 
 | Keybind                   | Explanation                                                                                                        |
-|---------------------------|--------------------------------------------------------------------------------------------------------------------|
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | Ctrl + Enter              | Queue up current graph for generation                                                                              |
 | Ctrl + Shift + Enter      | Queue up current graph as first for generation                                                                     |
 | Ctrl + Z/Ctrl + Y         | Undo/Redo                                                                                                          |
@@ -73,29 +75,30 @@ Put your VAE in: models/vae
 Note: pytorch stable does not support python 3.12 yet. If you have python 3.12 you will have to use the nightly version of pytorch. If you run into issues you should try python 3.11 instead.
 
 ### AMD GPUs (Linux only)
+
 AMD users can install rocm and pytorch with pip if you don't have it already installed, this is the command to install the stable version:
 
-```pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.6```
+`pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.6`
 
 This is the command to install the nightly with ROCm 5.7 which has a python 3.12 package and might have some performance improvements:
 
-```pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm5.7```
+`pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm5.7`
 
 ### NVIDIA
 
 Nvidia users should install stable pytorch using this command:
 
-```pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121```
+`pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu121`
 
 This is the command to install pytorch nightly instead which has a python 3.12 package and might have performance improvements:
 
-```pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121```
+`pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121`
 
 #### Troubleshooting
 
 If you get the "Torch not compiled with CUDA enabled" error, uninstall torch with:
 
-```pip uninstall torch```
+`pip uninstall torch`
 
 And install it again with the command above.
 
@@ -103,7 +106,7 @@ And install it again with the command above.
 
 Install the dependencies by opening your terminal inside the ComfyUI folder and:
 
-```pip install -r requirements.txt```
+`pip install -r requirements.txt`
 
 After this you should have everything installed and can proceed to running ComfyUI.
 
@@ -124,33 +127,33 @@ You can install ComfyUI in Apple Mac silicon (M1 or M2) with any recent macOS ve
 
 #### DirectML (AMD Cards on Windows)
 
-```pip install torch-directml``` Then you can launch ComfyUI with: ```python main.py --directml```
+`pip install torch-directml` Then you can launch ComfyUI with: `python main.py --directml`
 
 ### I already have another UI for Stable Diffusion installed do I really have to install all of these dependencies?
 
 You don't. If you have another UI installed and working with its own python venv you can use that venv to run ComfyUI. You can open up your favorite terminal and activate it:
 
-```source path_to_other_sd_gui/venv/bin/activate```
+`source path_to_other_sd_gui/venv/bin/activate`
 
 or on Windows:
 
-With Powershell: ```"path_to_other_sd_gui\venv\Scripts\Activate.ps1"```
+With Powershell: `"path_to_other_sd_gui\venv\Scripts\Activate.ps1"`
 
-With cmd.exe: ```"path_to_other_sd_gui\venv\Scripts\activate.bat"```
+With cmd.exe: `"path_to_other_sd_gui\venv\Scripts\activate.bat"`
 
 And then you can use that terminal to run ComfyUI without installing any dependencies. Note that the venv folder might be called something else depending on the SD UI.
 
 # Running
 
-```python main.py```
+`python main.py`
 
 ### For AMD cards not officially supported by ROCm
 
 Try running it with this command if you have issues:
 
-For 6700, 6600 and maybe other RDNA2 or older: ```HSA_OVERRIDE_GFX_VERSION=10.3.0 python main.py```
+For 6700, 6600 and maybe other RDNA2 or older: `HSA_OVERRIDE_GFX_VERSION=10.3.0 python main.py`
 
-For AMD 7600 and maybe other RDNA3 cards: ```HSA_OVERRIDE_GFX_VERSION=11.0.0 python main.py```
+For AMD 7600 and maybe other RDNA3 cards: `HSA_OVERRIDE_GFX_VERSION=11.0.0 python main.py`
 
 # Notes
 
@@ -168,8 +171,7 @@ Dynamic prompts also support C-style comments, like `// comment` or `/* comment 
 
 To use a textual inversion concepts/embeddings in a text prompt put them in the models/embeddings directory and use them in the CLIPTextEncode node like this (you can omit the .pt extension):
 
-```embedding:embedding_filename.pt```
-
+`embedding:embedding_filename.pt`
 
 ## How to increase generation speed?
 
@@ -177,11 +179,11 @@ Make sure you use the regular loaders/Load Checkpoint node to load checkpoints. 
 
 You can set this command line setting to disable the upcasting to fp32 in some cross attention operations which will increase your speed. Note that this will very likely give you black images on SD2.x models. If you use xformers or pytorch attention this option does not do anything.
 
-```--dont-upcast-attention```
+`--dont-upcast-attention`
 
 ## How to show high-quality previews?
 
-Use ```--preview-method auto``` to enable previews.
+Use `--preview-method auto` to enable previews.
 
 The default installation includes a fast latent preview method that's low-resolution. To enable higher-quality previews with [TAESD](https://github.com/madebyollin/taesd), download the [taesd_decoder.pth](https://github.com/madebyollin/taesd/raw/main/taesd_decoder.pth) (for SD1.x and SD2.x) and [taesdxl_decoder.pth](https://github.com/madebyollin/taesd/raw/main/taesdxl_decoder.pth) (for SDXL) models and place them in the `models/vae_approx` folder. Once they're installed, restart ComfyUI to enable high-quality previews.
 
