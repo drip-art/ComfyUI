@@ -1,7 +1,6 @@
 import torch
 import math
 import os
-import contextlib
 import comfy.utils
 import comfy.model_management
 import comfy.model_detection
@@ -126,7 +125,10 @@ class ControlBase:
                         if o[i] is None:
                             o[i] = prev_val
                         else:
-                            o[i] += prev_val
+                            if o[i].shape[0] < prev_val.shape[0]:
+                                o[i] = prev_val + o[i]
+                            else:
+                                o[i] += prev_val
         return out
 
 class ControlNet(ControlBase):
@@ -164,7 +166,7 @@ class ControlNet(ControlBase):
         if x_noisy.shape[0] != self.cond_hint.shape[0]:
             self.cond_hint = broadcast_image_to(self.cond_hint, x_noisy.shape[0], batched_number)
 
-        context = cond['c_crossattn']
+        context = cond.get('crossattn_controlnet', cond['c_crossattn'])
         y = cond.get('y', None)
         if y is not None:
             y = y.to(dtype)

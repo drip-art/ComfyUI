@@ -175,7 +175,7 @@ try:
         if int(torch_version[0]) >= 2:
             if ENABLE_PYTORCH_ATTENTION == False and args.use_split_cross_attention == False and args.use_quad_cross_attention == False:
                 ENABLE_PYTORCH_ATTENTION = True
-            if torch.cuda.is_bf16_supported():
+            if torch.cuda.is_bf16_supported() and torch.cuda.get_device_properties(torch.cuda.current_device()).major >= 8:
                 VAE_DTYPE = torch.bfloat16
     if is_intel_xpu():
         if args.use_split_cross_attention == False and args.use_quad_cross_attention == False:
@@ -496,7 +496,7 @@ def unet_dtype(device=None, model_params=0):
         return torch.float8_e4m3fn
     if args.fp8_e5m2_unet:
         return torch.float8_e5m2
-    if should_use_fp16(device=device, model_params=model_params):
+    if should_use_fp16(device=device, model_params=model_params, manual_cast=True):
         return torch.float16
     return torch.float32
 
@@ -546,10 +546,8 @@ def text_encoder_dtype(device=None):
     if is_device_cpu(device):
         return torch.float16
 
-    if should_use_fp16(device, prioritize_performance=False):
-        return torch.float16
-    else:
-        return torch.float32
+    return torch.float16
+
 
 def intermediate_device():
     if args.gpu_only:
@@ -698,7 +696,7 @@ def is_device_mps(device):
             return True
     return False
 
-def should_use_fp16(device=None, model_params=0, prioritize_performance=True):
+def should_use_fp16(device=None, model_params=0, prioritize_performance=True, manual_cast=False):
     global directml_enabled
 
     if device is not None:
@@ -724,10 +722,13 @@ def should_use_fp16(device=None, model_params=0, prioritize_performance=True):
     if is_intel_xpu():
         return True
 
-    if torch.cuda.is_bf16_supported():
+    if torch.version.hip:
         return True
 
     props = torch.cuda.get_device_properties("cuda")
+    if props.major >= 8:
+        return True
+
     if props.major < 6:
         return False
 
@@ -740,7 +741,7 @@ def should_use_fp16(device=None, model_params=0, prioritize_performance=True):
         if x in props.name.lower():
             fp16_works = True
 
-    if fp16_works:
+    if fp16_works or manual_cast:
         free_model_memory = (get_free_memory() * 0.9 - minimum_inference_memory())
         if (not prioritize_performance) or model_params * 4 > free_model_memory:
             return True
