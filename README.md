@@ -1,6 +1,6 @@
 ComfyUI
 =======
-The most powerful and modular stable diffusion GUI and backend.
+The most powerful and modular stable diffusion GUI and backends.
 -----------
 ![ComfyUI Screenshot](comfyui_screenshot.png)
 
